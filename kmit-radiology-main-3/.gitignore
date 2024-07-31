@@ -1,0 +1,7 @@
+/db.sqlite3
+/*/__pycache__
+/*/*/__pycache__
+/.vscode
+/media
+node_modules
+file-upload-api

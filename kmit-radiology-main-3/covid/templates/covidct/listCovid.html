@@ -1,0 +1,61 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>List</title>
+        <style>
+            table,
+            th,
+            td {
+                border: 1px solid white;
+            }
+        </style>
+    </head>
+    <body style="background-color: black; color: white"> -->
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+<div class="container-fluid">
+	<h1 style="color: white">List of Patient Images available on Server</h1>
+	<br />
+	<div class="table-responsive">
+		<table class="table table-dark">
+			<tr>
+				<th>PatientID</th>
+				<th>PatientName</th>
+				<th>PatientSex</th>
+				<th>PatientAge</th>
+				<th>StudyDate</th>
+				<th>Modality</th>
+				<th>ImageComments</th>
+				<th>SeriesDescription</th>
+				<th>BodyPartExamined</th>
+				<th>Posted By</th>
+				<th>Predict Image</th>
+			</tr>
+
+			{% for tmp in cl.values %}
+			<tr style="text-align: left">
+				{% for x in tmp.values %}
+				<td>{{x}}</td>
+				{% endfor %} {% if request.user.is_superuser %}
+				<td>
+					<a href="{% url 'covid:predict_covid' %}"
+						><button
+							name="Predict"
+							type="button"
+							class="btn btn-outline-warning"
+						>
+							Click to Predict
+						</button></a
+					>
+				</td>
+				{% endif %}
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+{% endblock %}

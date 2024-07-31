@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+<div>
+	<div class="container center">
+		<h1 style="color: white">Predict Covid - CT</h1>
+		<br />
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col">
+					<div class="row d-flex">
+						<div class="col-auto">
+							<h5 style="color: white">Upload Covid CT image</h5>
+						</div>
+						<div class="col-md-5 col-12">
+							<input
+								class="form-control form-control-sm"
+								type="file"
+								id="formFile"
+								name="doc1"
+								required
+								style="background-color: black; color: white"
+							/>
+						</div>
+						<!-- <br />
+                        <br />
+                        <center>
+                            <h3 style="color: white">OR</h3>
+                        </center>
+                        <br />
+                        <br />
+                        <div class="col-auto">
+                            <h5 style="color: white">Upload Covid CT image</h5>
+                        </div>
+                        <div class="col-md-5 col-12">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="inputFile"
+                                name="inputDoc1"
+                                placeholder="Type name of file from beside table"
+                                style="background-color: black; color: white"
+                            />
+                        </div> -->
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="col-auto">
+				<button type="submit" class="btn btn-outline-warning">
+					Submit
+				</button>
+			</div>
+			<br />
+			<h5 style="color: white">* upload png/jpg/jpeg images</h5>
+		</form>
+		<br />
+		<br />
+		{% if isSent %}
+		<h3 style="color: white">
+			The Predicted Image has been sent to {{ toSend }} user !!
+		</h3>
+		<br />
+		{% endif %} {% if url %}
+		<center>
+			<a
+				href="/media/covidFiles/{{ currUser }}/Predicted_Folder/{{ url }}"
+				style="cursor: pointer"
+			>
+				<img
+					src="/media/covidFiles/{{ currUser }}/Predicted_Folder/{{ url }}"
+					width="1200px"
+					height="800px"
+				/>
+			</a>
+			<br />
+			<br />
+
+			<button
+				type="button"
+				class="btn btn-outline-info"
+				data-bs-toggle="modal"
+				data-bs-target="#exampleModal"
+			>
+				Send Predicted Image to user
+			</button>
+
+			<div
+				class="modal fade"
+				id="exampleModal"
+				tabindex="-1"
+				aria-labelledby="exampleModalLabel"
+				aria-hidden="true"
+			>
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">
+								Send Predicted Image to user
+							</h5>
+							<button
+								type="button"
+								class="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"
+							></button>
+						</div>
+						<form
+							class="form-check form-switch"
+							method="POST"
+							action="/covid/sent/"
+						>
+							{% csrf_token %}
+							<div></div>
+
+							<div class="modal-body">
+								<ul style="list-style-type: none">
+									{% for users in MainUsersList%}
+									<li>
+										<input
+											name="checkedUser"
+											class="form-check-input"
+											type="checkbox"
+											value="{{ users }}"
+										/>
+										<h4>{{ users }}</h4>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+
+							<div class="modal-footer">
+								<button
+									type="button"
+									class="btn btn-secondary"
+									data-bs-dismiss="modal"
+								>
+									Close
+								</button>
+								<button type="submit" class="btn btn-primary">
+									Send
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</center>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

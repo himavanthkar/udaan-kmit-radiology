@@ -1,0 +1,33 @@
+.nav-item {
+	margin: 8px;
+}
+
+.navbar-brand {
+	font-size: 26px;
+	font-weight: 700;
+}
+
+.nav-item a {
+	font-size: 18px;
+}
+
+.nav-item button {
+	color: #ffffff;
+}
+
+/* .cc-selector input {
+	margin: 0;
+	padding: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+} */
+
+.cc-selector input {
+	display: none;
+}
+
+.toolNames {
+	margin-top: 5px;
+	font-size: 14px;
+}

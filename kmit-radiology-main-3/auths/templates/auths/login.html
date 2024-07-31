@@ -1,0 +1,155 @@
+{% load static from staticfiles %}
+
+<!-- <!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Login</title>
+        <link rel="stylesheet" href="{% static 'login.css' %}" />
+    </head>
+    <body>
+        <form class="box" method="post">
+            {% csrf_token %}
+            <h1>Login</h1>
+            <input
+                type="text"
+                name="username"
+                value=""
+                placeholder="Username"
+                required
+            />
+            <input
+                type="password"
+                name="password"
+                value=""
+                placeholder="Password"
+                required
+            />
+            <input type="submit" name="" value="Login" />
+        </form>
+        <div>
+            <center>
+                <h3>{% for message in messages %} {{message}} {% endfor %}</h3>
+            </center>
+        </div>
+    </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login</title>
+        <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    </head>
+    <body>
+        {% for message in messages %}
+        <div style="padding: 8px; background-color: coral">
+            <center>
+                <h4 style="color: white">{{message}}</h4>
+            </center>
+        </div>
+        {% endfor %}
+        <section>
+            <div class="container">
+                <div class="user signinBx">
+                    <div class="imgBx">
+                        <!-- <img
+                            src="https://raw.githubusercontent.com/WoojinFive/CSS_Playground/master/Responsive%20Login%20and%20Registration%20Form/img1.jpg"
+                            alt=""
+                        /> -->
+                        <img
+                            src="{% static 'images/authImages/radiology_scan.png' %}"
+                        />
+                    </div>
+                    <div class="formBx">
+                        <form method="post">
+                            {% csrf_token %}
+                            <h2>Sign in as user</h2>
+                            <input
+                                type="text"
+                                name="username"
+                                value=""
+                                placeholder="Username"
+                                required
+                            />
+                            <input
+                                type="password"
+                                name="password"
+                                value=""
+                                placeholder="Password"
+                                required
+                            />
+                            <input
+                                type="submit"
+                                name="userLogin"
+                                value="Login"
+                                onclick="value = true"
+                            />
+                            <p class="signup">
+                                <a
+                                    href="javascript:void(0)"
+                                    onclick="toggleForm();"
+                                    >Sign In as Doctor/Radiologist</a
+                                >
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="user signupBx">
+                    <div class="formBx">
+                        <form method="post">
+                            {% csrf_token %}
+                            <h2>Sign in as Doctor/Radiologist</h2>
+                            <input
+                                type="text"
+                                name="username"
+                                value=""
+                                placeholder="Username"
+                                required
+                            />
+                            <input
+                                type="password"
+                                name="password"
+                                value=""
+                                placeholder="Password"
+                                required
+                            />
+                            <input
+                                type="submit"
+                                name="userLogin"
+                                value="Login"
+                                onclick="value = 'isAdmin'"
+                            />
+                            <p class="signup">
+                                <a
+                                    href="javascript:void(0)"
+                                    onclick="toggleForm();"
+                                    >Sign In as user</a
+                                >
+                            </p>
+                        </form>
+                    </div>
+                    <div class="imgBx">
+                        <!-- <img
+                            src="https://raw.githubusercontent.com/WoojinFive/CSS_Playground/master/Responsive%20Login%20and%20Registration%20Form/img2.jpg"
+                            alt=""
+                        /> -->
+                        <img
+                            src="{% static 'images/authImages/stetho.png' %}"
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            const toggleForm = () => {
+                const container = document.querySelector(".container");
+                container.classList.toggle("active");
+            };
+        </script>
+    </body>
+</html>

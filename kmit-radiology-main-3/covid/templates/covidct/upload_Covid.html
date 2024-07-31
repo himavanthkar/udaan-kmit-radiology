@@ -1,0 +1,899 @@
+{% load static from staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Upload Covid</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+            crossorigin="anonymous"
+        ></script>
+        <link rel="stylesheet" href="{% static 'baseStyles.css' %}" />
+        <!-- include the hammer.js library for touch gestures-->
+        <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+        <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.min.js"></script>
+
+        <!-- include the cornerstone library -->
+        <script src="https://unpkg.com/cornerstone-core"></script>
+        <script src="https://unpkg.com/cornerstone-math"></script>
+        <script src="https://unpkg.com/cornerstone-wado-image-loader"></script>
+        <script src="https://unpkg.com/cornerstone-tools@latest"></script>
+    </head>
+    <body style="background-color: #0e0e0e">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'Home' %}"
+                    >KMIT - Radiology</a
+                >
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarSupportedContent"
+                >
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="{% url 'Home' %}"
+                                >Home</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+                        <li>
+                            <div
+                                class="collapse navbar-collapse"
+                                id="navbarNavDarkDropdown"
+                            >
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown">
+                                        <a
+                                            class="nav-link dropdown-toggle"
+                                            href="#"
+                                            id="navbarDarkDropdownMenuLink"
+                                            role="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            Facilities
+                                        </a>
+                                        <ul
+                                            class="
+                                                dropdown-menu dropdown-menu-dark
+                                            "
+                                            aria-labelledby="navbarDarkDropdownMenuLink"
+                                        >
+                                            <li>
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'covid:covid_home' %}"
+                                                    >COVID - CT</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'mammo:mammo_home' %}"
+                                                    >Mammography</a
+                                                >
+                                            </li>
+                                            {% if user.is_authenticated %}
+                                            <li>
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'Viewer' %}"
+                                                    >DICOM Viewer</a
+                                                >
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'auths:logout' %}">
+                                <button class="btn btn-danger" type="submit">
+                                    Logout
+                                </button>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'auths:login' %}">
+                                <button
+                                    class="btn btn-outline-info"
+                                    type="submit"
+                                >
+                                    Login
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-info" type="submit">
+                                Sign Up
+                            </button>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div>
+            <div
+                class="container center"
+                style="
+                    background-color: #0c2461;
+                    padding: 25px;
+                    margin-top: 55px;
+                    border-radius: 25px;
+                "
+            >
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-auto">
+                            <h3 style="color: white">
+                                Upload a Covid CT image
+                            </h3>
+                        </div>
+                        <div class="col-md-5 col-12">
+                            <input
+                                class="form-control"
+                                type="file"
+                                id="formFile"
+                                name="covid_document"
+                                required
+                            />
+                        </div>
+                        <div class="col-auto">
+                            <button
+                                type="button"
+                                class="btn btn-success"
+                                onclick="handleFileSelect()"
+                            >
+                                View Image
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-success">
+                                Upload to Server
+                            </button>
+                        </div>
+                        <br />
+                        <br />
+                        <center>
+                            <p style="color: white">
+                                * upload a single .dcm image
+                            </p>
+                        </center>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="container"
+                style="
+                    background-color: rgba(255, 255, 255, 0.09);
+                    padding: 10px;
+                    margin-top: 15px;
+                    border-radius: 25px;
+                "
+            >
+                <div class="row buttons tool-buttons">
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="Wwwc"
+                        >
+                            <svg
+                                name="level"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 18 18"
+                                width="1em"
+                                height="1em"
+                                fill="cyan"
+                                stroke="cyan"
+                            >
+                                <title>Level</title>
+                                <path
+                                    d="M14.5 3.5a1 1 0 0 1-11 11z"
+                                    opacity=".8"
+                                    stroke="none"
+                                ></path>
+                                <circle
+                                    cx="9"
+                                    cy="9"
+                                    r="8"
+                                    fill="none"
+                                    stroke-width="2"
+                                ></circle>
+                            </svg>
+                            <div style="color: cyan" class="toolNames">
+                                Shade
+                            </div>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="Pan"
+                        >
+                            <svg
+                                name="arrows"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 18 18"
+                                stroke="cyan"
+                                width="1em"
+                                height="1em"
+                                fill="cyan"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <title>Arrows</title>
+                                <path
+                                    d="M9 1v16M1 9h16M7 3l2-2 2 2M15 11l2-2-2-2M11 15l-2 2-2-2M3 7L1 9l2 2"
+                                ></path>
+                            </svg>
+                            <div class="toolNames" style="color: cyan">Pan</div>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="Zoom"
+                        >
+                            <svg
+                                name="search-plus"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 17 17"
+                                width="1em"
+                                height="1em"
+                                stroke="cyan"
+                            >
+                                <title>Search Plus</title>
+                                <g
+                                    fill="none"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                >
+                                    <path d="M11.5 11.5L16 16"></path>
+                                    <circle cx="7" cy="7" r="6"></circle>
+                                </g>
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Zoom
+                            </div>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="Magnify"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="cyan"
+                                class="bi bi-zoom-in"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"
+                                />
+                                <path
+                                    d="M10.344 11.742c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1 6.538 6.538 0 0 1-1.398 1.4z"
+                                />
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5z"
+                                />
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Magnify
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="RectangleRoi"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="cyan"
+                                class="bi bi-square"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                                />
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Rectangle
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="FreehandRoi"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="cyan"
+                                class="bi bi-pencil-fill"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
+                                />
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Freehand
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="EllipticalRoi"
+                        >
+                            <svg
+                                name="circle-o"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"
+                                width="1em"
+                                height="1em"
+                                fill="cyan"
+                            >
+                                <title>Circle Outline</title>
+                                <path
+                                    d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200z"
+                                ></path>
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Elliptical
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="col">
+                        <button
+                            class="btn set-tool btn-outline-dark"
+                            style="border: none; background-color: none"
+                            data-action="Eraser"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="cyan"
+                                class="bi bi-eraser-fill"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"
+                                />
+                            </svg>
+                            <div class="toolNames" style="color: cyan">
+                                Eraser
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="container center"
+                style="
+                    background-color: #000a12;
+                    padding: 20px;
+                    margin-top: 50px;
+                    border-radius: 25px;
+                    margin-bottom: 20px;
+                "
+            >
+                <div class="row">
+                    <div class="col-3">
+                        <a href="{% url 'Viewer' %}">
+                            <button
+                                id="imageButton1"
+                                type="button"
+                                class="btn btn-outline-info"
+                            >
+                                Open DCM Viewer
+                            </button>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'covid:predict_covid' %}">
+                            <button
+                                id="predict"
+                                type="button"
+                                class="btn btn-outline-warning"
+                            >
+                                Predict
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
+                <div style="padding: 20px; margin-top: 20px">
+                    <center>
+                        <div
+                            style="
+                                width: 624px;
+                                height: 624px;
+                                position: relative;
+                                color: white;
+                                display: inline-block;
+                            "
+                            oncontextmenu="return false"
+                            class="disable-selection noIbar"
+                            unselectable="on"
+                            onselectstart="return false;"
+                            onmousedown="return false;"
+                        >
+                            <div
+                                id="dicomImage"
+                                style="
+                                    width: 624px;
+                                    height: 624px;
+                                    top: 0px;
+                                    left: 0px;
+                                    position: absolute;
+                                    cursor: crosshair;
+                                "
+                            ></div>
+                        </div>
+                    </center>
+                </div>
+            </div>
+            <center>
+                <div class="row" style="margin-bottom: 40px; width: 100%">
+                    <div class="col">
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            id="show"
+                            onclick="showData()"
+                        >
+                            Save Annotations
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn btn-success"
+                            type="submit"
+                            id="download"
+                            onclick="download_CSV()"
+                        >
+                            Download Annotations as CSV
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn btn-success"
+                            type="submit"
+                            id="download"
+                            onclick="download_JSON()"
+                        >
+                            Download Annotations as JSON
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button
+                            class="btn btn-warning"
+                            type="submit"
+                            onclick="saveImage()"
+                        >
+                            Generate Mask Image
+                        </button>
+                    </div>
+                </div>
+            </center>
+        </div>
+        <script>
+            window.cornerstoneWADOImageLoader ||
+                document.write(
+                    '<script src="https://unpkg.com/cornerstone-wado-image-loader">\x3C/script>'
+                );
+        </script>
+        <script>
+            _initCornerstone();
+            initToolButtons();
+
+            var rectangleLt = [];
+            var ptsLt = [];
+
+            const element = document.getElementById("dicomImage");
+
+            cornerstoneTools.init({
+                showSVGCursors: true,
+            });
+            cornerstoneTools.toolStyle.setToolWidth(4);
+            // Set color for inactive tools
+            cornerstoneTools.toolColors.setToolColor("rgb(255, 255, 0)");
+            // Set color for active tools
+            cornerstoneTools.toolColors.setActiveColor("#eb2f06");
+            cornerstone.enable(element);
+
+            var imageName;
+            function handleFileSelect() {
+                const files = document.getElementById("formFile").files;
+                /*var path = document.getElementById("formPath").value;
+                var currPath = document.location.pathname;
+                var lp = "../../media/";
+                var ttt = path.split("/").pop();
+                lp = lp + ttt;
+                var url = "wadouri:" + url;
+                console.log(url);
+                cornerstone.loadAndCacheImage(url).then(function(image) {
+                console.log(image);
+                }*/
+                // this UI is only built for a single file so just dump the first one
+                file = files[0];
+                imageName = file.name;
+                const imageId =
+                    cornerstoneWADOImageLoader.wadouri.fileManager.add(file);
+                loadAndViewImage(imageId);
+            }
+
+            function loadAndViewImage(imageId) {
+                cornerstone.loadImage(imageId).then(
+                    function (image) {
+                        const viewport = cornerstone.getDefaultViewportForImage(
+                            element,
+                            image
+                        );
+                        cornerstone.displayImage(element, image, viewport);
+                        // cornerstone.enable(element);
+                    },
+                    function (err) {
+                        console.log(err);
+                    }
+                );
+            }
+
+            function _initCornerstone() {
+                cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+            }
+
+            var toolname;
+            function initToolButtons() {
+                const nameSpace = `.tool-buttons`;
+
+                const buttons = document.querySelectorAll(
+                    `${nameSpace} .set-tool`
+                );
+                // console.log(buttons);
+
+                const handleClick = function (evt) {
+                    const action = this.dataset.action;
+                    console.log(action);
+                    const apiTool = cornerstoneTools[`${action}Tool`];
+                    toolname = action;
+                    cornerstoneTools.addTool(apiTool);
+                    cornerstoneTools.setToolActive(action, {
+                        mouseButtonMask: 1,
+                    });
+                    return toolname;
+                };
+
+                buttons.forEach((btn) => {
+                    btn.addEventListener("contextmenu", handleClick);
+                    btn.addEventListener("auxclick", handleClick);
+                    btn.addEventListener("click", handleClick);
+                });
+            }
+
+            function showData() {
+                var toolData = cornerstoneTools.getToolState(element, toolname);
+                console.log(toolData);
+                // console.log(imageName);
+                if (toolname == "FreehandRoi") {
+                    for (var i = 0; i < toolData.data.length; i++) {
+                        ptsLt.push(toolData.data[i].handles.points);
+                    }
+                    console.log(ptsLt);
+                    alert("Saved FreehandROI !!");
+                } else {
+                    for (var i = 0; i < toolData.data.length; i++) {
+                        rectangleLt.push({
+                            imageName: imageName,
+                            x1: toolData.data[i].handles.start.x.toFixed(2),
+                            y1: toolData.data[i].handles.start.y.toFixed(2),
+                            x2: toolData.data[i].handles.end.x.toFixed(2),
+                            y2: toolData.data[i].handles.end.x.toFixed(2),
+                        });
+                    }
+                    // console.log("Saved !!");
+                    console.log(rectangleLt);
+                    alert("Saved !!");
+                }
+            }
+
+            function convertToCSV(objArray) {
+                var array =
+                    typeof objArray != "object"
+                        ? JSON.parse(objArray)
+                        : objArray;
+                var str = "";
+
+                for (var i = 0; i < array.length; i++) {
+                    var line = "";
+                    for (var index in array[i]) {
+                        if (line != "") line += ",";
+
+                        line += array[i][index];
+                    }
+
+                    str += line + "\r\n";
+                }
+
+                return str;
+            }
+
+            function exportCSVFile(headers, items, fileTitle) {
+                if (headers) {
+                    items.unshift(headers);
+                }
+
+                // Convert Object to JSON
+                var jsonObject = JSON.stringify(items);
+
+                var csv = this.convertToCSV(jsonObject);
+
+                var exportedFilenmae = fileTitle + ".csv" || "export.csv";
+
+                var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                if (navigator.msSaveBlob) {
+                    // IE 10+
+                    navigator.msSaveBlob(blob, exportedFilenmae);
+                } else {
+                    var link = document.createElement("a");
+                    if (link.download !== undefined) {
+                        // feature detection
+                        // Browsers that support HTML5 download attribute
+                        var url = URL.createObjectURL(blob);
+                        link.setAttribute("href", url);
+                        link.setAttribute("download", exportedFilenmae);
+                        link.style.visibility = "hidden";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                }
+            }
+
+            function download_CSV() {
+                if (rectangleLt.length == 0 || rectangleLt == null) {
+                    alert("No Annotations to download !!");
+                } else {
+                    var headers = {
+                        imageName: "imageName",
+                        x1: "x1",
+                        y1: "y1",
+                        x2: "x2",
+                        y2: "y2",
+                    };
+
+                    var fileTitle = "csv_Annotations";
+                    exportCSVFile(headers, rectangleLt, fileTitle);
+                }
+            }
+
+            function download_JSON() {
+                if (rectangleLt.length == 0 || rectangleLt == null) {
+                    alert("No Annotations to download !!");
+                } else {
+                    var newLt = rectangleLt;
+                    var data = JSON.stringify(rectangleLt);
+                    downloadJSONFile(data, "annotationsFile");
+                }
+            }
+
+            function downloadJSONFile(data, givenName) {
+                // data is the string type, that contains the contents of the file.
+                // filename is the default file name, some browsers allow the user to change this during the save dialog.
+
+                // Note that we use octet/stream as the mimetype
+                // this is to prevent some browsers from displaying the
+                // contents in another browser tab instead of downloading the file
+                var filename = givenName + ".json" || "export.json";
+
+                var blob = new Blob([data], { type: "octet/stream" });
+
+                //IE 10+
+                if (window.navigator.msSaveBlob) {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    //Everything else
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.href = url;
+                    a.download = filename;
+
+                    setTimeout(() => {
+                        //setTimeout hack is required for older versions of Safari
+                        a.click();
+                        //Cleanup
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }, 1);
+                }
+            }
+            function saveImage() {
+                let getimage = cornerstone.getImage(element);
+                // doResize(624, 624, element);
+
+                // setTimeout(function () {
+                //     let naturalWidth = getimage.width;
+                //     let naturalHeight = getimage.height;
+                //     console.log(naturalWidth, naturalHeight);
+
+                //     // let canvas = document.getElementById("canvas");
+                //     var dummy = document.createElement("canvas");
+                //     var oCanvas = document.createElement("canvas"); // making a dummy canvas to put image
+                //     oCanvas.width = 624; // use the original size
+                //     oCanvas.height = 624;
+                //     // canvas.width = naturalWidth; // use the original size
+                //     // canvas.height = naturalHeight;
+                //     let context = oCanvas.getContext("2d");
+                //     context.drawImage(dummy, 0, 0, 624, 624);
+
+                //     ptsLt.forEach((item) => {
+                //         //console.log(item);
+                //         context.strokeStyle = "rgb(255,0,0)";
+                //         context.fillStyle = "#FFFFFF"; // Filling rectangle color
+                //         context.lineWidth = 2;
+                //         context.globalCompositeOperation = "source-over";
+                //         context.moveTo(item[0].x, item[0].y);
+                //         for (var j = 1; j < item.length; j++) {
+                //             context.lineTo(item[j].x, item[j].y);
+                //         }
+                //         context.fill();
+                //     });
+
+                //     let base64 = oCanvas.toDataURL("image/jpeg", 1.0);
+                //     console.log(base64);
+                //     if (base64.length > 12) {
+                //         base64 = base64.replace(/^data:image\/\w+;base64,/, "");
+                //         base64 = atob(base64);
+                //         let count = base64.length;
+                //         console.log(count);
+                //         let u8arr = new Uint8Array(count);
+                //         while (count--) {
+                //             u8arr[count] = base64.charCodeAt(count);
+                //         }
+                //         let file = new File([u8arr], { type: "jpeg" });
+                //         if (navigator.msSaveBlob) {
+                //             // IE 10+
+                //             navigator.msSaveBlob(file, "mask.png");
+                //         } else {
+                //             var link = document.createElement("a");
+                //             if (link.download !== undefined) {
+                //                 // feature detection
+                //                 // Browsers that support HTML5 download attribute
+                //                 var url = URL.createObjectURL(file);
+                //                 link.setAttribute("href", url);
+                //                 link.setAttribute("download", "mask.png");
+                //                 link.style.visibility = "hidden";
+                //                 document.body.appendChild(link);
+                //                 link.click();
+                //                 document.body.removeChild(link);
+                //             }
+                //         }
+                //     }
+                //     doResize(1438, 780, element);
+                // }, 1000);
+
+                let naturalWidth = getimage.width;
+                let naturalHeight = getimage.height;
+                console.log(naturalWidth, naturalHeight);
+
+                let canvas = document.getElementById("canvas");
+                var dummy = document.createElement("canvas");
+                var oCanvas = document.createElement("canvas"); // making a dummy canvas to put image
+                oCanvas.width = naturalWidth; // use the original size
+                oCanvas.height = naturalHeight;
+                dummy.style.background = "black";
+                oCanvas.style.background = "black";
+                // canvas.width = naturalWidth; // use the original size
+                // canvas.height = naturalHeight;
+                let context = oCanvas.getContext("2d");
+                context.drawImage(dummy, 0, 0, naturalWidth, naturalHeight);
+                context.rect(0, 0, naturalWidth, naturalHeight);
+                context.fill();
+
+                ptsLt.forEach((item) => {
+                    //console.log(item);
+                    context.strokeStyle = "rgb(255,0,0)";
+                    context.fillStyle = "#FFFFFF"; // Filling rectangle color
+                    context.lineWidth = 2;
+                    context.globalCompositeOperation = "source-over";
+                    context.beginPath();
+                    context.moveTo(item[0].x, item[0].y);
+                    for (var j = 1; j < item.length; j++) {
+                        context.lineTo(item[j].x, item[j].y);
+                    }
+                    context.fill();
+                });
+
+                let base64 = oCanvas.toDataURL("image/png", 0.7);
+                // console.log(base64);
+                if (base64.length > 12) {
+                    base64 = base64.replace(/^data:image\/\w+;base64,/, "");
+                    base64 = atob(base64);
+                    let count = base64.length;
+                    console.log(count);
+                    let u8arr = new Uint8Array(count);
+                    while (count--) {
+                        u8arr[count] = base64.charCodeAt(count);
+                    }
+                    let file = new File([u8arr], { type: "png" });
+                    if (navigator.msSaveBlob) {
+                        // IE 10+
+                        navigator.msSaveBlob(file, "mask.png");
+                    } else {
+                        var link = document.createElement("a");
+                        if (link.download !== undefined) {
+                            // feature detection
+                            // Browsers that support HTML5 download attribute
+                            var url = URL.createObjectURL(file);
+                            link.setAttribute("href", url);
+                            link.setAttribute("download", "mask.png");
+                            link.style.visibility = "hidden";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+
+<div class="container-fluid">
+    <div class="parallax-mammo">
+        <div class="mainTitle">
+            <h1>Mammography</h1>
+        </div>
+        <!-- <div class="images">
+            <img src="{% static 'radioEditing.png' %}" />
+        </div> -->
+    </div>
+
+    <div class="container smallContent">
+        <div class="row">
+            <div class="col">
+                <h1 style="color: white"><u>About</u></h1>
+                <div class="paragraph">
+                    <p>
+                        A mammogram is an x-ray picture of the breast. It can be
+                        used to check for breast cancer in women who have no
+                        signs or symptoms of the disease. It can also be used if
+                        you have a lump or other sign of breast cancer.The goal
+                        of mammography is the early detection of breast cancer,
+                        typically through detection of characteristic masses or
+                        microcalcifications. Mammograms can be used to check for
+                        breast cancer in women who have no signs or symptoms of
+                        the disease. This type of mammogram is called a
+                        screening mammogram. Screening mammograms usually
+                        involve two or more x-ray pictures, or images, of each
+                        breast. The x-ray images often make it possible to
+                        detect tumors that cannot be felt. Screening mammograms
+                        can also find microcalcifications (tiny deposits of
+                        calcium) that sometimes indicate the presence of breast
+                        cancer.
+                    </p>
+                    <p>
+                        Mammograms can also be used to check for breast cancer
+                        after a lump or other sign or symptom of the disease has
+                        been found. This type of mammogram is called a
+                        diagnostic mammogram. Besides a lump, signs of breast
+                        cancer can include breast pain, thickening of the skin
+                        of the breast, nipple discharge, or a change in breast
+                        size or shape; however, these signs may also be signs of
+                        benign conditions. A diagnostic mammogram can also be
+                        used to evaluate changes found during a screening
+                        mammogram or to view breast tissue when it is difficult
+                        to obtain a screening mammogram because of special
+                        circumstances, such as the presence of breast implants.
+                        Early detection of breast cancer with screening
+                        mammography means that treatment can be started earlier
+                        in the course of the disease, possibly before it has
+                        spread. Results from randomized clinical trials and
+                        other studies show that screening mammography can help
+                        reduce the number of deaths from breast cancer among
+                        women ages 40 to 74, especially for those over age 50.
+                    </p>
+                </div>
+            </div>
+            <div class="col">
+                <img
+                    style="float: right"
+                    src="{% static 'm2.png' %}"
+                    height="500px"
+                    width="700px"
+                />
+            </div>
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="container uploading">
+        <a href="{% url 'mammo:upload_Mammo' %}"
+            ><button type="button" class="btn btn-info">
+                Upload Mammogram
+            </button></a
+        >
+    </div>
+
+    <!-- <div class="container uploading">
+		<a href="{% url 'mammo:predictMammo' %}"
+			><button type="button" class="btn btn-info">
+				Predict Mammogram
+			</button></a
+		>
+	</div> -->
+    {% endif %}
+</div>
+<div>
+    <footer class="text-center text-white">
+        <div>
+            <footer class="text-center text-white">
+                <div class="container p-4">
+                    <section class="mb-4">
+                        <!-- Google -->
+                        <a
+                            class="btn btn-outline-light btn-floating m-1"
+                            href="https://kmit.in/"
+                            role="button"
+                            ><i class="bi bi-google"></i
+                        ></a>
+
+                        <!-- Linkedin -->
+                        <a
+                            class="btn btn-outline-light btn-floating m-1"
+                            href="#!"
+                            role="button"
+                            ><i class="bi bi-linkedin"></i
+                        ></a>
+                    </section>
+                    <section class="mb-4">
+                        <p>
+                            This website is currently under experimental phase.
+                        </p>
+                        <p>
+                            Please contact us if any further assistance is
+                            required.
+                        </p>
+                    </section>
+                    <!-- Section: Text -->
+                </div>
+                <!-- Grid container -->
+
+                <!-- Copyright -->
+                <!-- <div class="row" style="width: 100%">
+					<div
+						class="col text-center p-3"
+						style="background-color: rgba(0, 0, 0, 0.2)"
+					>
+						Developed by Nishchal Singi And Team
+					</div> -->
+                <div
+                    class="col text-center p-3"
+                    style="background-color: rgba(0, 0, 0, 0.2)"
+                >
+                    © 2021 Copyright: KMIT
+                </div>
+                <!-- </div> -->
+
+                <!-- Copyright -->
+            </footer>
+            <!-- Footer -->
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+</div>
+
+{% endblock %}

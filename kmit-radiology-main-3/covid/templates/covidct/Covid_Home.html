@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+
+<div class="container-fluid">
+    <div class="parallax-covid">
+        <div class="mainTitle">
+            <h1>Covid - CT</h1>
+        </div>
+        <!-- <div class="images">
+            <img src="{% static 'radioEditing.png' %}" />
+        </div> -->
+    </div>
+
+    <div class="container smallContent">
+        <div class="row">
+            <div class="col">
+                <h1 style="color: white"><u>About</u></h1>
+                <div class="paragraph">
+                    <p>
+                        Coronavirus disease (COVID-19) is an infectious disease
+                        caused by a newly discovered coronavirus. Most people
+                        who fall sick with COVID-19 will experience mild to
+                        moderate symptoms and recover without special treatment.
+                    </p>
+                    <p>
+                        The virus that causes COVID-19 is mainly transmitted
+                        through droplets generated when an infected person
+                        coughs, sneezes, or exhales. These droplets are too
+                        heavy to hang in the air, and quickly fall on floors or
+                        surfaces. You can be infected by breathing in the virus
+                        if you are within close proximity of someone who has
+                        COVID-19, or by touching a contaminated surface and then
+                        your eyes, nose or mouth.
+                    </p>
+                    <p>
+                        By using our sophisticated AI the doctors will be able
+                        to quickly predict whether a person is exposed to COVID
+                        or not
+                    </p>
+                </div>
+            </div>
+            <div class="col">
+                <img
+                    style="float: right"
+                    src="{% static 'images/covidImages/scan3.png' %}"
+                    height="500px"
+                    width="700px"
+                />
+            </div>
+        </div>
+    </div>
+    {% if user.is_authenticated %} {% if user.is_superuser %}
+    <div class="container uploading">
+        <a href="{% url 'covid:upload_covid' %}"
+            ><button type="button" class="btn btn-info">
+                Upload and Annotate Covid - CT
+            </button></a
+        >
+    </div>
+    <div class="container uploading">
+        <a href="{% url 'covid:predict_covid' %}"
+            ><button type="button" class="btn btn-info">
+                Predict Covid
+            </button></a
+        >
+    </div>
+    {% endif %}
+    <div class="container uploading">
+        <a href="{% url 'covid:list_covid' %}"
+            ><button type="button" class="btn btn-info">
+                Covid - CT Images on Server
+            </button></a
+        >
+    </div>
+    {% endif %}
+</div>
+<div>
+    <footer class="text-center text-white">
+        <div>
+            <footer class="text-center text-white">
+                <div class="container p-4">
+                    <section class="mb-4">
+                        <!-- Google -->
+                        <a
+                            class="btn btn-outline-light btn-floating m-1"
+                            href="https://kmit.in/"
+                            role="button"
+                            ><i class="bi bi-google"></i
+                        ></a>
+
+                        <!-- Linkedin -->
+                        <a
+                            class="btn btn-outline-light btn-floating m-1"
+                            href="#!"
+                            role="button"
+                            ><i class="bi bi-linkedin"></i
+                        ></a>
+                    </section>
+                    <section class="mb-4">
+                        <p>
+                            This website is currently under experimental phase.
+                        </p>
+                        <p>
+                            Please contact us if any further assistance is
+                            required.
+                        </p>
+                    </section>
+                    <!-- Section: Text -->
+                </div>
+                <!-- Grid container -->
+
+                <!-- Copyright -->
+                <!-- <div class="row" style="width: 100%">
+					<div
+						class="col text-center p-3"
+						style="background-color: rgba(0, 0, 0, 0.2)"
+					>
+						Developed by Nishchal Singi And Team
+					</div> -->
+                <div
+                    class="col text-center p-3"
+                    style="background-color: rgba(0, 0, 0, 0.2)"
+                >
+                    © 2021 Copyright: KMIT
+                </div>
+                <!-- </div> -->
+
+                <!-- Copyright -->
+            </footer>
+            <!-- Footer -->
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+</div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        {% if url %}
+        <div
+            class="container center"
+            style="
+                margin-top: 50px;
+                padding: 25px;
+                background-color: #0a3d62;
+                border-radius: 25px;
+            "
+        >
+            <img src="/media/covidFiles/{{ url }}" />
+            <a href="/media/covidFiles/{{ url }}"
+                ><h1 style="color: white">/media/covidFiles/{{ url }}</h1></a
+            >
+        </div>
+        {% endif %}
+    </body>
+</html>

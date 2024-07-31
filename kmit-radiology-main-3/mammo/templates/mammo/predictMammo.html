@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+<div>
+	<div class="container center">
+		<h1 style="color: white">Predict Mammogram</h1>
+		<br />
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col">
+					<div class="row d-flex">
+						<div class="col-auto">
+							<h5 style="color: white">
+								Upload a Mammogram image
+							</h5>
+						</div>
+						<div class="col-md-5 col-12">
+							<input
+								class="form-control form-control-sm"
+								type="file"
+								id="formFile"
+								name="mammoDoc"
+								required
+								style="background-color: black; color: white"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="col-auto">
+				<button type="submit" class="btn btn-outline-warning">
+					Submit
+				</button>
+			</div>
+			<br />
+			<h5 style="color: white">* upload png/jpg/jpeg images</h5>
+		</form>
+		<br />
+		<br />
+		{% if url %}
+		<center>
+			<a href="/media/covidFiles/{{ url }}" style="cursor: pointer">
+				<img
+					src="/media/covidFiles/{{ url }}"
+					width="1200px"
+					height="800px"
+				/>
+			</a>
+			<br />
+			<br />
+
+			<button
+				class="btn btn-outline-danger"
+				onclick="handleUploadToServer(`{{ url }}`)"
+			>
+				Upload Image to server
+			</button>
+			<script>
+				function handleUploadToServer(url) {
+					// console.log(url);
+					setTimeout(() => {
+						alert(
+							`Image uploaded to server\nImage is saved as - ` +
+								url
+						);
+					});
+				}
+			</script>
+		</center>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

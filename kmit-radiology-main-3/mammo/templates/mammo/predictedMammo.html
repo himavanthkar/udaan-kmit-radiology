@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+<div></div>
+{% load static from staticfiles %} {% block content1 %}
+<div>
+    <div
+        class="container center"
+        style="
+            margin-top: 50px;
+            padding: 25px;
+            background-color: #0a3d62;
+            border-radius: 25px;
+        "
+    >
+        <script src="{% static 'js/annotations/openseadragon-annotorious.min.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-toolbar@latest/dist/annotorious-toolbar.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="{% static 'js/annotations/annotorious.min.css' %}"
+        />
+
+        <center>
+            <div class="row container center">
+                <div class="col-lg-7">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="save"
+                        onclick="saveAnnotations()"
+                    >
+                        Save Annotations
+                    </button>
+                    <div
+                        id="show"
+                        class="position-fixed bottom-0 end-0 p-3"
+                        style="z-index: 5"
+                    ></div>
+                </div>
+                <div
+                    class="col-lg-3"
+                    id="toolbar-container"
+                    style="
+                        background-color: #fa983a;
+                        border-radius: 25px;
+                        margin-bottom: 25px;
+                        padding: 5px;
+                    "
+                ></div>
+            </div>
+            <div id="openseadragon1" style="width: 800px; height: 600px"></div>
+        </center>
+
+        <script type="text/javascript">
+            var viewer = OpenSeadragon({
+                id: "openseadragon1",
+                navigatorPosition: "TOP_RIGHT",
+                showNavigator: true,
+                prefixUrl: "{% static 'js/openseadragon/images/' %}",
+                tileSources: {
+                    type: "image",
+                    url: "{{ url }}",
+                    buildPyramid: false,
+                },
+            });
+            var anno = OpenSeadragon.Annotorious(viewer);
+            Annotorious.Toolbar(
+                anno,
+                document.getElementById("toolbar-container")
+            );
+            anno.addDrawingTool();
+        </script>
+
+        <br />
+        <div
+            style="z-index: 10"
+            class="alert alert-info alert-dismissible fade-out show position-fixed bottom-0 end-0 p-5 m-4"
+            role="alert"
+        >
+            <strong>Save Annotations before downloading !!</strong>
+            <br />
+            <p id="currentDateTime" style="color: gray"></p>
+            <script>
+                var today = new Date();
+                var date =
+                    today.getDate() +
+                    "-" +
+                    (today.getMonth() + 1) +
+                    "-" +
+                    today.getFullYear();
+
+                var time =
+                    today.getHours() +
+                    ":" +
+                    today.getMinutes() +
+                    ":" +
+                    today.getSeconds();
+                var dateTime = date + " " + time;
+                document.getElementById(
+                    "currentDateTime"
+                ).innerHTML += dateTime;
+            </script>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+            ></button>
+        </div>
+        <center>
+            <div class="row container center">
+                <div class="col">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="download"
+                        onclick="download_JSON()"
+                    >
+                        Download Annotations as JSON
+                    </button>
+                </div>
+                <div class="col">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="download"
+                        onclick="download_CSV()"
+                    >
+                        Download Annotations as CSV
+                    </button>
+                </div>
+                <div class="col">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="download"
+                        onclick="download_AnnoPic()"
+                    >
+                        Save Predicted Image
+                    </button>
+                </div>
+            </div>
+        </center>
+    </div>
+    <script src="{% static 'js/annotationsView.js' %}"></script>
+</div>
+{% endblock %}

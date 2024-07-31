@@ -1,5 +1,6 @@
 # udaan-kmit-radiology
-my kmit radiology work as an intern
+My kmit radiology work as an intern in kmit Udaan research Lab which I have collaborated with two other members adarsh and nischal. 
+
 Make sure you are using LINUX OS and make a seperate folder (For development purpose) and a seperate virtual environment.
 
 Ignore the '$' symbols, they represent commands to type in terminal

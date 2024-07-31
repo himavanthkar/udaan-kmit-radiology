@@ -45,7 +45,7 @@ If you can see your environment name in the brackets then the environment is act
 
 Now, clone the kmit-radiology repo in the New Folder you have created,
 ```
-$ git clone https://github.com/Nishchal-007/kmit-radiology.git
+$ git clone https://github.com/himavanthnightrider/udaan-kmit-radiology.git
 ```
 Now, install all the required packages in your virtual environment, to so so,
 ```
